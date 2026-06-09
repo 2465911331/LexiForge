@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Card 1 (Left "Prefix" Assembly Block) Shadow -->
+    <path
+        android:fillColor="#22000000"
+        android:pathData="M27,35h24a4,4 0 0 1 4,4v36a4,4 0 0 1 -4,4h-24a4,4 0 0 1 -4,-4v-36a4,4 0 0 1 4,-4z" />
+
+    <!-- Card 1 Card Body (Glassmorphic look) -->
+    <path
+        android:pathData="M25,32h24a4,4 0 0 1 4,4v36a4,4 0 0 1 -4,4h-24a4,4 0 0 1 -4,-4v-36a4,4 0 0 1 4,-4z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="25"
+                android:startY="32"
+                android:endX="53"
+                android:endY="76"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#E6EADDFF" />
+                <item android:offset="1.0" android:color="#CCD0BCFF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Card 1 Accent Top Bar -->
+    <path
+        android:fillColor="#FF21005D"
+        android:pathData="M25,36v-4h24v4z" />
+
+    <!-- Card 1 Letter "L" representing the Prefix segment of LexiForge -->
+    <path
+        android:fillColor="#FF21005D"
+        android:pathData="M35,42 h3.5 v10.5 h6.5 v3.5 h-10 z" />
+
+    <!-- Connection Link (Center representation of Magnetic Assembly) -->
+    <path
+        android:strokeColor="#A8D0BCFF"
+        android:strokeWidth="1.2"
+        android:fillColor="#00000000"
+        android:pathData="M48,54h12" />
+    
+    <!-- Central Glowing Magnet Core -->
+    <path
+        android:pathData="M54,54m-4,0a4,4 0,1,1 8,0a4,4 0,1,1 -8,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="50"
+                android:startY="50"
+                android:endX="58"
+                android:endY="58"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFFFD8E4" />
+                <item android:offset="1.0" android:color="#FF7D5260" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Card 2 (Right "Suffix" Assembly Block) Shadow -->
+    <path
+        android:fillColor="#22000000"
+        android:pathData="M61,35h24a4,4 0 0 1 4,4v36a4,4 0 0 1 -4,4h-24a4,4 0 0 1 -4,-4v-36a4,4 0 0 1 4,-4z" />
+
+    <!-- Card 2 Card Body -->
+    <path
+        android:pathData="M59,32h24a4,4 0 0 1 4,4v36a4,4 0 0 1 -4,4h-24a4,4 0 0 1 -4,-4v-36a4,4 0 0 1 4,-4z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="59"
+                android:startY="32"
+                android:endX="87"
+                android:endY="76"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#F2FFE1F2" />
+                <item android:offset="1.0" android:color="#E6FFD8E4" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Card 2 Accent Top Bar -->
+    <path
+        android:fillColor="#FF7D5260"
+        android:pathData="M59,36v-4h24v4z" />
+
+    <!-- Card 2 Letter "F" representing the Suffix/Root segment of LexiForge -->
+    <path
+        android:fillColor="#FF7D5260"
+        android:pathData="M65,42 h10 v3 h-6.5 v3 h4.5 v3 h-4.5 v5 h-3.5 z" />
+
+    <!-- Connection magnetic indicator dots -->
+    <path
+        android:fillColor="#E6FFD8E4"
+        android:pathData="M54,44m-2,0a2,2 0,1,1 4,0a2,2 0,1,1 -4,0" />
+    <path
+        android:fillColor="#E6FFD8E4"
+        android:pathData="M54,64m-2,0a2,2 0,1,1 4,0a2,2 0,1,1 -4,0" />
+
+</vector>

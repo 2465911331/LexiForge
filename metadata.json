@@ -1,0 +1,6 @@
+{
+  "name": "LexiForge",
+  "description": "An adaptive vocabulary learning tool that reverse-engineers words into prefix, root, and suffix modules, with multi-stage Ebbinghaus review and custom book imports from KyleBing vocabulary.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
