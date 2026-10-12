@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -88,19 +89,29 @@ fun EveningSiegeScreen(
     viewModel: LexiViewModel,
     modifier: Modifier = Modifier
 ) {
+    AnswerSaveError(viewModel)
     val components by viewModel.allComponents.collectAsStateWithLifecycle()
     val words by viewModel.eveningSiegeWords.collectAsStateWithLifecycle()
     val allWords by viewModel.allWords.collectAsStateWithLifecycle()
     val selectedWordId by viewModel.selectedWordId.collectAsStateWithLifecycle()
     val isEbbinghausActive by viewModel.isEbbinghausFilterActive.collectAsStateWithLifecycle()
+    val dailyPlanActive by viewModel.dailyPlanActive.collectAsStateWithLifecycle()
 
-    // Safety initialization: Default to select first word if none active
+    val activeWord = allWords.find { it.id == selectedWordId }
+    var labTab by remember { mutableStateOf("DECONSTRUCT") }
+
+    var previousQueuedIds by remember { mutableStateOf(emptySet<String>()) }
+
+    // Preserve feedback when an answer leaves the queue, then start a fresh attempt when it is due again.
     LaunchedEffect(words, selectedWordId) {
-        if (words.isNotEmpty()) {
-            if (selectedWordId == null) {
-                viewModel.selectWordForAssembly(words.first())
-            }
+        val queuedIds = words.map { it.id }.toSet()
+        val currentId = selectedWordId
+        if (currentId == null && words.isNotEmpty()) {
+            viewModel.selectWordForAssembly(words.first())
+        } else if (currentId != null && currentId in queuedIds && currentId !in previousQueuedIds) {
+            viewModel.selectWordForAssembly(words.first { it.id == currentId })
         }
+        previousQueuedIds = queuedIds
     }
 
     // Evening deep dark layout theme (cyan/blue blueprint style)
@@ -133,14 +144,14 @@ fun EveningSiegeScreen(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "返回控制中心",
+                text = "返回",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
         }
 
-        if (words.isEmpty()) {
+        if (words.isEmpty() && activeWord == null) {
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -154,14 +165,14 @@ fun EveningSiegeScreen(
                     Text("🏝️", fontSize = 54.sp)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "目前没有符合艾宾浩斯周期的复习任务！",
+                        text = "当前没有待学或到期的单词",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "您的记忆力今天状态绝佳。您可以切换回「总单词表」查看全部，或者前往「设置」暂时关闭艾宾浩斯智能复习模式来浏览探索！",
+                        text = "到期任务会自动更新。返回今日页面可开始学习；单词列表支持自由练习。",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -216,7 +227,7 @@ fun EveningSiegeScreen(
                         if (activeWord != null) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = activeWord.spell,
+                                    text = if (labTab == "ASSEMBLE") "拼写与构词练习" else activeWord.spell,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Black,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -225,7 +236,7 @@ fun EveningSiegeScreen(
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = "已拼装完成",
+                                        contentDescription = "曾答对",
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(16.dp)
                                     )
@@ -233,11 +244,7 @@ fun EveningSiegeScreen(
                             }
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = if (isEbbinghausActive) {
-                                    "📈 艾宾浩斯智能复习：进度 ${if(realIndex != -1) (currentIndex + 1).toString() else "?"} / ${words.size}"
-                                } else {
-                                    "📋 四级物理数据库：拼装 ${if(realIndex != -1) (currentIndex + 1).toString() else "?"} / ${words.size}"
-                                },
+                                text = "${if (dailyPlanActive) "今日计划" else if (isEbbinghausActive) "到期复习" else "单词训练"} · 队列剩余 ${words.size} 个",
                                 fontSize = 10.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Bold
@@ -304,14 +311,14 @@ fun EveningSiegeScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "词汇逆向物理组装台",
+                                text = "单词练习",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "请任选一个四级大词，进入「解构物理推导」与「磁吸卡位拼装」强化实验室。",
+                                text = "选择一个单词，查看构词提示并进行拼装或拼写练习。",
                                 fontSize = 13.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
@@ -323,7 +330,9 @@ fun EveningSiegeScreen(
                         word = selectedWord,
                         components = components,
                         viewModel = viewModel,
-                        isEbbinghausActive = isEbbinghausActive
+                        isEbbinghausActive = isEbbinghausActive,
+                        labTab = labTab,
+                        onTabChange = { labTab = it }
                     )
                 }
             }
@@ -336,13 +345,15 @@ fun ActiveLaboratoryPanel(
     word: WordFormula,
     components: List<AffixComponent>,
     viewModel: LexiViewModel,
-    isEbbinghausActive: Boolean
+    isEbbinghausActive: Boolean,
+    labTab: String,
+    onTabChange: (String) -> Unit
 ) {
-    var labTab by remember { mutableStateOf("DECONSTRUCT") } // DECONSTRUCT or ASSEMBLE
     var isSliced by remember { mutableStateOf(false) }
+    val attempt by viewModel.assemblyAttempt.collectAsStateWithLifecycle()
 
     // Reset slice state whenever word changes
-    LaunchedEffect(word.id) {
+    LaunchedEffect(word.id, attempt) {
         isSliced = false
     }
 
@@ -352,7 +363,7 @@ fun ActiveLaboratoryPanel(
         // Lab switch Tabs (Material 3 style) - Centered and Shrunk
         Row(
             modifier = Modifier
-                .widthIn(max = 240.dp)
+                .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
                 .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
                 .padding(2.dp),
@@ -360,11 +371,11 @@ fun ActiveLaboratoryPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { labTab = "DECONSTRUCT" },
-                modifier = Modifier.weight(1f).height(28.dp),
+                onClick = { onTabChange("DECONSTRUCT") },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (labTab == "DECONSTRUCT") MaterialTheme.colorScheme.primary else Color.Transparent,
-                    contentColor = if (labTab == "DECONSTRUCT") MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant
+                    contentColor = if (labTab == "DECONSTRUCT") MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp, vertical = 2.dp),
                 shape = RoundedCornerShape(10.dp)
@@ -375,16 +386,16 @@ fun ActiveLaboratoryPanel(
                 ) {
                     Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.size(11.dp))
                     Spacer(modifier = Modifier.width(3.dp))
-                    Text("物理切分室", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text("学习解析", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
             }
 
             Button(
-                onClick = { labTab = "ASSEMBLE" },
-                modifier = Modifier.weight(1f).height(28.dp),
+                onClick = { onTabChange("ASSEMBLE") },
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (labTab == "ASSEMBLE") MaterialTheme.colorScheme.primary else Color.Transparent,
-                    contentColor = if (labTab == "ASSEMBLE") MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant
+                    contentColor = if (labTab == "ASSEMBLE") MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp, vertical = 2.dp),
                 shape = RoundedCornerShape(10.dp)
@@ -395,7 +406,7 @@ fun ActiveLaboratoryPanel(
                 ) {
                     Icon(Icons.Default.Build, contentDescription = null, modifier = Modifier.size(11.dp))
                     Spacer(modifier = Modifier.width(3.dp))
-                    Text("磁吸组装", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text("拼写与构词", fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
             }
         }
@@ -412,12 +423,13 @@ fun ActiveLaboratoryPanel(
                 .padding(16.dp)
         ) {
             if (labTab == "DECONSTRUCT") {
+                val attempt by viewModel.assemblyAttempt.collectAsStateWithLifecycle()
+                LaunchedEffect(word.bookId, word.id, attempt) { viewModel.markWordHint("ANALYSIS") }
                 DisassemblyRoom(
                     word = word,
                     isSliced = isSliced,
                     onSliceTrigger = { isSliced = true },
                     onReconstructTrigger = {
-                        viewModel.resetSelectedDisassembly(word.id)
                         isSliced = false
                     },
                     isEbbinghausActive = isEbbinghausActive
@@ -448,101 +460,6 @@ fun formatPartPart(part: String?): Pair<String, String> {
     return Pair(core, desc)
 }
 
-private fun isNetworkAvailable(context: android.content.Context): Boolean {
-    val cm = context.getSystemService(android.content.Context.CONNECTIVITY_SERVICE) as? android.net.ConnectivityManager
-    if (cm != null) {
-        val activeNetwork = cm.activeNetwork ?: return false
-        val capabilities = cm.getNetworkCapabilities(activeNetwork) ?: return false
-        return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    }
-    return false
-}
-
-// Robust thread-safe audio player that loads online pronunciation with system offline TTS fallback
-private fun playWordAudio(
-    context: android.content.Context,
-    word: String,
-    tts: android.speech.tts.TextToSpeech?,
-    ttsReady: Boolean
-) {
-    val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
-    if (!isNetworkAvailable(context)) {
-        mainHandler.post {
-            if (ttsReady && tts != null) {
-                try {
-                    tts.speak(word, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "fallback_offline")
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-        return
-    }
-
-    try {
-        val encodedWord = java.net.URLEncoder.encode(word, "UTF-8")
-        // High quality US English audio stream from dict voice API
-        val audioUrl = "https://dict.youdao.com/dictvoice?type=2&audio=$encodedWord"
-        
-        Thread {
-            try {
-                val mp = android.media.MediaPlayer.create(context, android.net.Uri.parse(audioUrl))
-                if (mp != null) {
-                    mp.setOnCompletionListener { player ->
-                        player.release()
-                    }
-                    mp.setOnErrorListener { player, _, _ ->
-                        player.release()
-                        // Immediate offline TTS fallback on player error
-                        mainHandler.post {
-                            if (ttsReady && tts != null) {
-                                try {
-                                    tts.speak(word, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "fallback_err")
-                                } catch (ex: Exception) {
-                                    ex.printStackTrace()
-                                }
-                            }
-                        }
-                        true
-                    }
-                    mp.start()
-                } else {
-                    // Fallback to offline TTS if creator fails
-                    mainHandler.post {
-                        if (ttsReady && tts != null) {
-                            try {
-                                tts.speak(word, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "fallback_null")
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                mainHandler.post {
-                    if (ttsReady && tts != null) {
-                        try {
-                            tts.speak(word, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "fallback_thread_exc")
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-            }
-        }.start()
-    } catch (e: Exception) {
-        e.printStackTrace()
-        if (ttsReady && tts != null) {
-            try {
-                tts.speak(word, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "fallback_encoding_exc")
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
-}
-
 @Composable
 fun DisassemblyRoom(
     word: WordFormula,
@@ -551,47 +468,33 @@ fun DisassemblyRoom(
     onReconstructTrigger: () -> Unit,
     isEbbinghausActive: Boolean
 ) {
-    val context = LocalContext.current
-    var tts by remember { mutableStateOf<android.speech.tts.TextToSpeech?>(null) }
-    var ttsReady by remember { mutableStateOf(false) }
+    val speak = rememberWordSpeaker()
+    LaunchedEffect(word.id, speak) { speak(word.spell) }
 
-    DisposableEffect(context) {
-        val appCtx = context.applicationContext
-        var speech: android.speech.tts.TextToSpeech? = null
-        val listener = android.speech.tts.TextToSpeech.OnInitListener { status ->
-            if (status == android.speech.tts.TextToSpeech.SUCCESS) {
-                speech?.let { s ->
-                    try {
-                        var result = s.setLanguage(java.util.Locale.US)
-                        if (result == android.speech.tts.TextToSpeech.LANG_MISSING_DATA ||
-                            result == android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED) {
-                            result = s.setLanguage(java.util.Locale.ENGLISH)
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                    ttsReady = true
-                }
+    val blockEntry = com.example.data.OfflineMorphology.displayEntry(word)
+    if (blockEntry?.blocks?.isNotEmpty() == true) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(word.spell, style = MaterialTheme.typography.headlineMedium)
+            Text(word.chineseMeaning)
+            Button(onClick = { speak(word.spell) }) { Text("播放读音") }
+            Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.medium) {
+                Text(blockEntry.blocks.joinToString(" · "), Modifier.fillMaxWidth().padding(20.dp), style = MaterialTheme.typography.headlineSmall)
             }
+            MorphologyInfo(word)
+            Text("切换到“拼写与构词”即可练习分块排序。")
         }
-
-        try {
-            // Intelligent, auto-detective custom multi-engine initializer that supports OnePlus/OPPO fallback natively
-            speech = com.example.ui.utils.TtsHelper.createTextToSpeech(appCtx, listener)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
-
-        tts = speech
-        onDispose {
-            speech?.stop()
-            speech?.shutdown()
-        }
+        return
     }
 
-    LaunchedEffect(word.id, tts, ttsReady) {
-        // Trigger auto vocalization on entry
-        playWordAudio(context, word.spell, tts, ttsReady)
+    if (!com.example.data.OfflineMorphology.canAssemble(word)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(word.spell, style = androidx.compose.material3.MaterialTheme.typography.headlineMedium)
+            Text(word.chineseMeaning)
+            Button(onClick = { speak(word.spell) }) { Text("播放读音") }
+            MorphologyInfo(word)
+            Text("切换到“拼写与构词”即可练习整词拼写。")
+        }
+        return
     }
 
     val scrollState = rememberScrollState()
@@ -629,7 +532,6 @@ fun DisassemblyRoom(
                     )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                FrequencyBadge(frequencyGroup = word.frequencyGroup)
                 Spacer(modifier = Modifier.width(10.dp))
                 Box(
                     modifier = Modifier
@@ -637,7 +539,7 @@ fun DisassemblyRoom(
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary)
                         .clickable {
-                            playWordAudio(context, word.spell, tts, ttsReady)
+                            speak(word.spell)
                         }
                         .testTag("speak_word_btn"),
                     contentAlignment = Alignment.Center
@@ -652,13 +554,15 @@ fun DisassemblyRoom(
             }
 
             Text(
-                text = "CET-4 中文释义：${word.chineseMeaning}",
+                text = "中文释义：${word.chineseMeaning}",
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 4.dp)
             )
 
             Spacer(modifier = Modifier.height(28.dp))
+
+            MorphologyInfo(word)
 
             // Physical Word slicing model
             if (!isSliced) {
@@ -686,7 +590,7 @@ fun DisassemblyRoom(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "点击底部物理切分按钮，启动激光，将单词解构为最小功能前缀、词根和后缀模块。",
+                    text = "点击下方按钮查看构词提示。拆解与联想用于辅助记忆。",
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -743,7 +647,7 @@ fun DisassemblyRoom(
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("词根 ROOT", fontSize = 9.sp, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
+                                Text(if (word.rootId?.startsWith("rule:base:") == true) "词基 BASE" else "词根 ROOT", fontSize = 9.sp, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = core, 
@@ -815,7 +719,7 @@ fun DisassemblyRoom(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                "物理逻辑推算公式",
+                                "构词提示",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -831,9 +735,9 @@ fun DisassemblyRoom(
                             word.literalFormula
                         }
                         val evolutionTip = if (isEbbinghausActive) {
-                            "💡 艾宾浩斯强化自适应：当前处于艾宾浩斯强化复习状态下，系统已全自动为您隐去词缀、词根的详细汉字翻译释义。请在脑海中对前缀、词根的形态进行快速物理形态匹配推断，以极速固化学过的大词！"
+                            "复习时先尝试回忆构词含义，再结合单词释义检查理解。"
                         } else {
-                            "💡 物理逻辑演化原理：在英语构词中，前缀指明方向或状态属性，词根刻画物理动作，后缀确认词性。将其切割复原理清逻辑，不仅能极易记忆该词，更能一眼识破包含相同词根/前缀的整组50+复杂四级考纲同源单词！"
+                            "💡 构词说明和联想用于辅助记忆，不代表全部词义，也不能任意组合出新单词。请结合释义与例句学习。"
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -875,7 +779,7 @@ fun DisassemblyRoom(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("⚡️ 启动物理解构切分", color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text("查看构词拆解", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             } else {
                 Button(
@@ -887,7 +791,7 @@ fun DisassemblyRoom(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("🔄 退回重置模型", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                    Text("收起构词拆解", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -901,11 +805,17 @@ fun AssemblyPuzzleLab(
     viewModel: LexiViewModel,
     isEbbinghausActive: Boolean
 ) {
+    val blockEntry = com.example.data.OfflineMorphology.displayEntry(word)
+    if (blockEntry?.blocks?.isNotEmpty() == true) {
+        BlockPractice(word, blockEntry, viewModel)
+        return
+    }
     val selectedPrefix by viewModel.userPrefixSelection.collectAsStateWithLifecycle()
     val selectedRoot by viewModel.userRootSelection.collectAsStateWithLifecycle()
     val selectedSuffix by viewModel.userSuffixSelection.collectAsStateWithLifecycle()
     val shakeTrigger by viewModel.shakeTrigger.collectAsStateWithLifecycle()
     val isSuccess by viewModel.assemblySuccess.collectAsStateWithLifecycle()
+    val attempt by viewModel.assemblyAttempt.collectAsStateWithLifecycle()
 
     // Rapid shaking animation using jetpack compose's Animatable
     val errorActionOffset = remember { Animatable(0f) }
@@ -922,7 +832,7 @@ fun AssemblyPuzzleLab(
     }
 
     // Distractors pool generator (select distractors dynamically)
-    val prefixOptions = remember(word.id) {
+    val prefixOptions = remember(word.id, components) {
         if (word.prefixId == null) {
             emptyList()
         } else {
@@ -935,12 +845,12 @@ fun AssemblyPuzzleLab(
                 anchorWord = "",
                 anchorDesc = ""
             )
-            val allOtherPrefs = components.filter { it.type == "PREFIX" && it.id != word.prefixId }.shuffled()
+            val allOtherPrefs = components.filter { it.type == "PREFIX" && it.id != word.prefixId && it.name != corr.name }.distinctBy { it.name }.shuffled()
             (listOf(corr) + allOtherPrefs.take(3)).shuffled()
         }
     }
 
-    val rootOptions = remember(word.id) {
+    val rootOptions = remember(word.id, components) {
         if (word.rootId == null) {
             emptyList()
         } else {
@@ -953,12 +863,12 @@ fun AssemblyPuzzleLab(
                 anchorWord = "",
                 anchorDesc = ""
             )
-            val allOtherRoots = components.filter { it.type == "ROOT" && it.id != word.rootId }.shuffled()
+            val allOtherRoots = components.filter { it.type == "ROOT" && it.id != word.rootId && it.name != corr.name }.distinctBy { it.name }.shuffled()
             (listOf(corr) + allOtherRoots.take(3)).shuffled()
         }
     }
 
-    val suffixOptions = remember(word.id) {
+    val suffixOptions = remember(word.id, components) {
         if (word.suffixId == null) {
             emptyList()
         } else {
@@ -971,7 +881,7 @@ fun AssemblyPuzzleLab(
                 anchorWord = "",
                 anchorDesc = ""
             )
-            val allOtherSuff = components.filter { it.type == "SUFFIX" && it.id != word.suffixId }.shuffled()
+            val allOtherSuff = components.filter { it.type == "SUFFIX" && it.id != word.suffixId && it.name != corr.name }.distinctBy { it.name }.shuffled()
             (listOf(corr) + allOtherSuff.take(2)).shuffled()
         }
     }
@@ -988,7 +898,8 @@ fun AssemblyPuzzleLab(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .testTag("assembly_scroller"),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Targets clues desk
@@ -996,7 +907,7 @@ fun AssemblyPuzzleLab(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "🎯 真题释义：${word.chineseMeaning}",
+                    text = "🎯 释义：${word.chineseMeaning}",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -1004,9 +915,10 @@ fun AssemblyPuzzleLab(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                val formattedSentence = word.sentenceEn.replace(word.spell, "_______")
+                if (com.example.ui.hasTeachingExample(word)) {
+                val formattedSentence = Regex(Regex.escape(word.spell), RegexOption.IGNORE_CASE).replace(word.sentenceEn, "_______")
                 Text(
-                    text = "真题语境：$formattedSentence",
+                    text = "练习例句：$formattedSentence",
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.primary, // light purple highlight
                     fontWeight = FontWeight.SemiBold
@@ -1018,12 +930,13 @@ fun AssemblyPuzzleLab(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp)
                 )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            val isSpellingMode = word.prefixId == null && word.suffixId == null
-            var spellInput by remember { mutableStateOf("") }
+            val isSpellingMode = !com.example.data.OfflineMorphology.canAssemble(word)
+            var spellInput by remember(word.id, attempt) { mutableStateOf("") }
             val keyboardController = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
 
             if (isSpellingMode) {
@@ -1042,7 +955,7 @@ fun AssemblyPuzzleLab(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "✍️ 此单词无明显词缀，请直接拼写巩固",
+                        text = "✍️ 本词采用整词拼写，不使用未经核对的拆分",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -1059,7 +972,7 @@ fun AssemblyPuzzleLab(
                     } else {
                         androidx.compose.material3.OutlinedTextField(
                             value = spellInput,
-                            onValueChange = { spellInput = it },
+                            onValueChange = { spellInput = it; viewModel.onWordAnswerEdited() },
                             label = { Text("输入拼写") },
                             modifier = Modifier.fillMaxWidth(0.9f),
                             singleLine = true,
@@ -1131,7 +1044,7 @@ fun AssemblyPuzzleLab(
 
                     // Root Slot (Themed color - Gold)
                     AssemblyTargetSlot(
-                        title = "词根 ROOT",
+                        title = if (word.rootId?.startsWith("rule:base:") == true) "词基 BASE" else "词根 ROOT",
                         expectedId = word.rootId,
                         selectedComponent = selectedRoot,
                         required = word.rootId != null,
@@ -1179,7 +1092,7 @@ fun AssemblyPuzzleLab(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "🔓 组装解码成功！ (CET-4 APPROVED)",
+                                text = "拼写分块正确，可以继续学习。",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
@@ -1198,7 +1111,7 @@ fun AssemblyPuzzleLab(
                         }
 
                         Text(
-                            text = "拼接词义逻辑：$successFormula",
+                            text = "拼写分块提示：$successFormula",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -1207,7 +1120,7 @@ fun AssemblyPuzzleLab(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "物理词根印记已被完整烧录，您可在左侧探索下一个CET-4长单词了。",
+                            text = "本次拼装正确，可以继续下一个单词。请按计划复习巩固。",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -1249,7 +1162,7 @@ fun AssemblyPuzzleLab(
                     // Render Roots row
                     if (word.rootId != null && selectedRoot == null) {
                         Column {
-                            Text("选择合适 [词根] (ROOT):", fontSize = 11.sp, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
+                            Text(if (word.rootId?.startsWith("rule:base:") == true) "选择合适 [词基] (BASE):" else "选择合适 [词根] (ROOT):", fontSize = 11.sp, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
                             LazyRow(
                                 modifier = Modifier.padding(vertical = 4.dp),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)

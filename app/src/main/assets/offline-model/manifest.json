@@ -1,0 +1,18 @@
+{
+  "name": "MiniCPM5-1B",
+  "quantization": "Q4_K_M",
+  "file": "MiniCPM5-1B-Q4_K_M.gguf",
+  "size": 688065920,
+  "sha256": "81b64d05a23b17b34c475f42b3e72fbde62d4b92cc34541f7a8031d0752deafa",
+  "repository": "https://huggingface.co/openbmb/MiniCPM5-1B-GGUF",
+  "revision": "3d55fac80935ae6456986ad2384b5cbcc4d6c948",
+  "modelLicense": "Apache-2.0",
+  "engine": "https://github.com/ggml-org/llama.cpp",
+  "engineCommit": "77757a34672a888845a09ab45728b8d34aa475ff",
+  "engineLicense": "MIT",
+  "context": 2048,
+  "maxOutputTokens": 256,
+  "threads": 4,
+  "thinking": false,
+  "inferenceNetworkAccess": false
+}

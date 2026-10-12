@@ -76,16 +76,13 @@ fun NoonBlitzScreen(
     modifier: Modifier = Modifier,
     onNavigateToEvening: () -> Unit
 ) {
-    val componentsState by viewModel.noonBlitzComponents.collectAsStateWithLifecycle()
-    var components by remember { mutableStateOf(emptyList<AffixComponent>()) }
-    val currentIndex by viewModel.swipeDeckIndex.collectAsStateWithLifecycle()
-    val showAnchorId by viewModel.showAnchorId.collectAsStateWithLifecycle()
-
-    LaunchedEffect(componentsState, currentIndex) {
-        if (currentIndex == 0) {
-            components = componentsState
-        }
+    AnswerSaveError(viewModel)
+    val components by viewModel.noonBlitzComponents.collectAsStateWithLifecycle()
+    androidx.compose.runtime.LaunchedEffect(components.firstOrNull()?.bookId, components.firstOrNull()?.id) {
+        viewModel.beginComponent(components.firstOrNull())
     }
+    val currentIndex = 0
+    val showAnchorId by viewModel.showAnchorId.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -125,7 +122,7 @@ fun NoonBlitzScreen(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "返回控制中心",
+                    text = "返回",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -142,13 +139,13 @@ fun NoonBlitzScreen(
             ) {
                 Column {
                     Text(
-                        text = "☀️ 午间闪电战 (Noon Blitz)",
+                        text = "构词卡片",
                         fontSize = (4.5f * vw).coerceIn(16f, 22f).sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "物理映射熟练度培养 · Tinder卡片式速刷",
+                        text = "回忆含义，再标记是否记得",
                         fontSize = (3f * vw).coerceIn(10f, 13f).sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -161,7 +158,7 @@ fun NoonBlitzScreen(
                         .padding(horizontal = (3f * vw).coerceIn(8f, 16f).dp, vertical = (1f * vh).coerceIn(4f, 8f).dp)
                 ) {
                     Text(
-                        text = "${currentIndex}/${components.size} 组件",
+                        text = "待学 ${components.size} 张",
                         fontSize = (3.5f * vw).coerceIn(11f, 15f).sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -199,7 +196,7 @@ fun NoonBlitzScreen(
                             )
                             Spacer(modifier = Modifier.height((2f * vh).coerceIn(8f, 16f).dp))
                             Text(
-                                text = "本组词缀/词根已刷完！",
+                                text = "暂时没有待学卡片",
                                 fontSize = (5f * vw).coerceIn(18f, 24f).sp,
                                 fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -207,7 +204,7 @@ fun NoonBlitzScreen(
                             )
                             Spacer(modifier = Modifier.height((1.5f * vh).coerceIn(6f, 12f).dp))
                             Text(
-                                text = "你已成功唤醒核心词根组件。建议在晚间进行拼装阵地战，将这些零件组装为真题复杂长单词！",
+                                text = "到达复习时间后，卡片会自动重新出现。也可以继续练习单词。",
                                 fontSize = (3.5f * vw).coerceIn(11f, 15f).sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
@@ -228,7 +225,7 @@ fun NoonBlitzScreen(
                                 ) {
                                     Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size((4f * vw).coerceIn(14f, 20f).dp))
                                     Spacer(modifier = Modifier.width((1.5f * vw).coerceIn(4f, 8f).dp))
-                                    Text("再次清理", color = MaterialTheme.colorScheme.surface, fontSize = (3.5f * vw).coerceIn(11f, 14f).sp)
+                                    Text("刷新队列", color = MaterialTheme.colorScheme.surface, fontSize = (3.5f * vw).coerceIn(11f, 14f).sp)
                                 }
                                 Spacer(modifier = Modifier.width((3f * vw).coerceIn(8f, 16f).dp))
                                 Button(
@@ -237,7 +234,7 @@ fun NoonBlitzScreen(
                                     shape = RoundedCornerShape((3f * vw).coerceIn(8f, 14f).dp),
                                     modifier = Modifier.height((11f * vh).coerceIn(38f, 50f).dp)
                                 ) {
-                                    Text("进入晚间拼装台", color = MaterialTheme.colorScheme.surface, fontSize = (3.5f * vw).coerceIn(11f, 14f).sp)
+                                    Text("练习单词", color = MaterialTheme.colorScheme.onPrimary, fontSize = (3.5f * vw).coerceIn(11f, 14f).sp)
                                 }
                             }
                         }
@@ -353,7 +350,7 @@ fun NoonBlitzScreen(
                         Spacer(modifier = Modifier.height((2f * vh).coerceIn(8f, 16f).dp))
 
                         Text(
-                            text = "遇到陌生词源组件? 用你极度熟悉的：",
+                            text = "查看部件与参考词：",
                             fontSize = (3.5f * vw).coerceIn(11f, 15f).sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -448,7 +445,7 @@ fun ComponentCard(
 
     val labelText = when (component.type) {
         "PREFIX" -> "PREFIX前缀"
-        "ROOT" -> "ROOT词根"
+        "ROOT" -> if (component.id.startsWith("rule:base:")) "BASE词基" else "ROOT词根"
         else -> "SUFFIX后缀"
     }
 

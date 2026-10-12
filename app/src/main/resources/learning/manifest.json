@@ -1,0 +1,25 @@
+{
+  "version": "2026.10.02.2",
+  "inputSha256": {
+    "morphynet-eng.tsv": "5920edacc1888b14464fc5cd96beea0a721221d56d1dc0e49de22f4c7c537c50",
+    "cmudict.dict": "81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22",
+    "moby-hyphenation.txt": "eeb30474c86b8af3469035ec1a0913e35905325ca885290db9dfed9881e230ac"
+  },
+  "morphynetCommit": "378144f64df58c78db5245af19d16a511ccecf3a",
+  "cmudictCommit": "74790861f652b15e4ac49015a90074ad62a27690",
+  "morphologyRecords": 80464,
+  "spellingRecords": 28300,
+  "filterCounts": {
+    "alphabet_or_pos": 17530,
+    "base_absent_from_reference_dictionary": 65067,
+    "exception": 106,
+    "prefix_pos_or_spelling": 15311,
+    "suffix_boundary": 16,
+    "unsupported_affix": 41515,
+    "unsupported_spelling": 4339
+  },
+  "outputSha256": {
+    "morphynet.tsv.gz": "924f883daf00c62554c68e8144113b0459b9303646fc9c5c2aff9c704bb02d8c",
+    "spelling.tsv.gz": "0c1454160544963c7c8d6aa78d293dbdba56ab75028622f27d7b6004514511ae"
+  }
+}

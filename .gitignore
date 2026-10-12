@@ -16,3 +16,16 @@
 local.properties
 .env
 debug.keystore
+/app/embedded-assets/models/*.gguf
+/app/embedded-assets/models/*.part
+/app/src/main/assets/models/*.gguf
+/app/src/main/assets/models/*.part
+/app/embedded-jni/
+/native/.build/
+/native/.vendor/
+/.idea/
+/.build-outputs/
+*.apk
+*.jks
+*.keystore
+*.gguf

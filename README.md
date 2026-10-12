@@ -1,21 +1,78 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# LexiForge
 
-# Run and deploy your AI Studio app
+## 安装包
 
-This contains everything you need to run your app locally.
+目前提供两个安装包，见 [GitHub Releases](https://github.com/2465911331/LexiForge/releases)：
 
-View your app in AI Studio: https://ai.studio/apps/f2af80bd-e288-424f-8e7a-7a523a3b9a57
+| 版本 | 安装包 | 大小 | 区别 |
+|---|---|---|---|
+| 内置 AI 测试版 · 1.0.12-test | `LexiForge-1.0.12-内置AI.apk` | 约 716 MB | 包含 MiniCPM5-1B Q4_K_M，可在单词详情页本机生成学习草稿，无 AI API 调用 |
+| 不内置 AI 版 · 1.0.11 | `LexiForge-1.0.11-不内置AI.apk` | 约 23 MB | 不包含模型，提供词书、每日计划、复习、内容纠错、词族与考试词汇专项 |
 
-## Run Locally
+两个包沿用同一应用包名和开发签名，可以由普通版升级到内置 AI 版，不能同时安装。安装前请导出学习备份；安装内置 AI 版后不要通过卸载重装来降级，以免删除学习数据。这次不内置 AI 安装包保留真实版本号 1.0.11；后续计划从同一版本源码同时发布两种构建。
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+内置 AI 版建议预留至少 3 GB 存储空间，模型首次从 APK 提取，完全断网也可准备和生成。生成内容可能有误，不自动修改词库、学习进度或判分依据。157 项自动化测试通过，但尚未在一加 ACE2 Pro / ColorOS 16 真机上验证模型推理。详见 [安装与测试说明](docs/OFFLINE_MODEL_TEST.md)。APK、使用说明、源码压缩包和 SHA-256 校验文件随 Release 提供。
 
+## 版本记录
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+1.0.12-test 提供 MiniCPM5-1B Q4_K_M 内置模型测试包，在单词详情页本机生成释义转述、记忆提示和例句草稿，不调用 AI API。大模型包需单独构建，普通构建不含模型；生成结果不修改词书或学习进度。安装、许可与复现步骤见 [离线模型测试说明](docs/OFFLINE_MODEL_TEST.md)。
+
+1.0.11 新增按学习记录排序的个性化复习，以及四、六级词书的词汇回忆、语境填空专项；完善已修订内容筛选、词族检验和不会作答入口。全部本地运行，不调用 AI API。使用范围和备份兼容见 [个性化复习与考试专项](docs/personal-exam-release.md)。
+
+1.0.10 新增无提示检验、错词复习、个人内容纠错和词族学习，入口为首页“检验与巩固”。个人修订与原词条分开保存，随完整备份恢复；四项功能均在本地运行，不调用 AI API。使用、升级和内容边界见 [学习工具说明](docs/learning-tools-release.md)。
+
+1.0.9 新增按词书保存的每日学习计划：首页设置每日 0～200 个新词，优先到期复习，错词保留、重复作答不重复计数，计划随备份恢复。使用和升级边界见 [每日计划说明](docs/daily-plan-release.md)。
+
+Kotlin / Jetpack Compose 编写的 Android 英语学习应用。使用 Room 保存本地学习进度，支持词根词缀卡片、单词拼装、拼写训练和间隔复习。
+
+当前为开发原型，内置内容规模有限，尚未达到公开稳定版标准。项目目标是发展为可长期使用的开源学习应用，开发顺序与验收标准见 [产品路线](docs/product-roadmap.md)，许可、内容来源和发布准备见 [开源发布准备](docs/open-source-readiness.md)。路线中的待办功能不代表当前版本已经具备。
+
+界面已重排为“今日、单词、设置”，列表筛选与训练范围独立，次级训练返回原入口。具体行为和验证范围见 [UI 改版说明](docs/ui-update.md)。
+
+1.0.1 统一词表与训练页发音，增加本地语音模式、英语离线音色选择和试听诊断。国产安卓设备的验证步骤及限制见 [离线发音说明](docs/offline-speech.md)。
+
+1.0.8 已加入多词书并存、独立进度与学习位置、完整作答事件，以及覆盖全部词书的备份恢复。数据库从 3 显式迁移到 4，迁移前校验恢复点；旧版进度保留，历史答案不补造。安装和使用见 [多词书与学习记录说明](docs/library-history-release.md)。后续发布加固目标见 [数据可靠性规划](docs/data-safety-plan.md)。
+
+## 本地运行
+
+1. 使用 Android Studio 打开本目录，选择随 IDE 提供的 JDK。
+2. 等待 Gradle 同步，安装提示中缺少的 SDK。项目使用 Gradle 9.3.1、Android SDK 36.1、Build Tools 36.0.0。
+3. 项目沿用导出时的调试签名配置。首次在 Windows 构建前，在项目目录执行：
+
+   ```powershell
+   [IO.File]::WriteAllBytes((Join-Path (Get-Location) 'debug.keystore'), [Convert]::FromBase64String((Get-Content debug.keystore.base64 -Raw)))
+   ```
+
+   `debug.keystore` 已被 Git 忽略，仅供调试，不用于正式发布。
+
+4. 选择模拟器或自行连接的测试设备，运行 `app`。
+
+当前功能不调用 Gemini，无需配置 Gemini API 密钥。外部词书下载和在线发音需要网络；系统 TTS 是否能离线发音取决于设备已安装的语音包。
+
+构词功能使用本地解析包与规则，不调用 AI API。内置模型仅在可选测试构建中提供学习助手，不替代词书解析、拆词规则或判分依据。见 [离线构词方案](docs/offline-content-strategy.md)。
+
+1.0.4 已接入首个本地解析包，停用自动猜词根和按文件顺序划分词频，并修正现有词书内容、保留学习进度。解析覆盖范围、来源、备份兼容与真实词库验证见 [离线解析版本说明](docs/offline-morphology-release.md)。
+
+1.0.5 增加 36 条词书驱动的离线构词规则，检查词基、词性、拼写变化和例外；规则结果可进入拼写分块训练，并与已核对解析区分。升级会重新分析已下载词书并保留学习进度，见 [规则、边界与验证](docs/morphology-rules.md)。
+
+1.0.6 将规则扩展至 51 条，增加否定前缀、名词/形容词/动词派生及有限词族变形，并修正跨词性释义误匹配。见 [本批规则与验证](docs/morphology-rules-1.0.6.md)。
+
+1.0.7 接入独立 MorphyNet 构词资料、明确复合词表，以及 Moby / CMUdict 拼写与读音辅助。词基不必出现在当前词书，新增多块排序训练；构词分块与普通拼写分块分别显示、统计。全部本地运行，升级保留进度。见 [数据许可、生成流程与验证](docs/learning-pack.md)。
+
+## 验证
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:assembleDebug
+```
+
+首次构建需要下载依赖。如网络需要代理，请在 Android Studio 或个人 Gradle 配置中设置，不要把本机代理地址提交到仓库。
+
+## 第一批修订
+
+- 内置词书改为 18 个固定词条、24 个构词组件，停用机械扩词。
+- 修正拼装答案，复杂词形采用整体拼写，例句标为教学例句。
+- 到期队列每秒检查时间，支持当天再次复习、阶段 0 错题重练和空队列。
+- 取消 20 词门槛；提前自由练习不提升复习阶段。
+- 更新旧内置词书时保留有效条目的学习进度；外部词书不在启动时被覆盖。
+
+详见 [内容与复习规则说明](docs/content-review.md)。后续版本已加入离线构词规则与多词书独立进度；考试词频分级、经核实的跨词书进度共享仍待实施。

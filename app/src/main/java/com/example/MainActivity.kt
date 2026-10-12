@@ -21,7 +21,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            MyApplicationTheme {
+            com.example.ui.screens.DataStartup {
             val viewModel: LexiViewModel = viewModel()
+            val reload by viewModel.requiresDataReload.collectAsStateWithLifecycle()
+            androidx.compose.runtime.LaunchedEffect(reload) {
+                if (reload) { viewModelStore.clear(); recreate() }
+            }
             val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
             val dynamicColorPref by viewModel.dynamicColor.collectAsStateWithLifecycle()
 
@@ -39,6 +45,8 @@ class MainActivity : ComponentActivity() {
                     viewModel = viewModel,
                     modifier = Modifier.fillMaxSize()
                 )
+            }
+            }
             }
         }
     }

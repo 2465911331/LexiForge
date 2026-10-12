@@ -1,0 +1,443 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "510376961c064478de8e1ac9f699c429",
+    "entities": [
+      {
+        "tableName": "affix_components",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `icon` TEXT NOT NULL, `literalMeaning` TEXT NOT NULL, `anchorWord` TEXT NOT NULL, `anchorDesc` TEXT NOT NULL, `isMastered` INTEGER NOT NULL, `reviewCount` INTEGER NOT NULL, `lastReviewedAt` INTEGER NOT NULL, `ebbinghausStage` INTEGER NOT NULL, `nextReviewAt` INTEGER NOT NULL, `bookId` TEXT NOT NULL, PRIMARY KEY(`bookId`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "literalMeaning",
+            "columnName": "literalMeaning",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anchorWord",
+            "columnName": "anchorWord",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anchorDesc",
+            "columnName": "anchorDesc",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isMastered",
+            "columnName": "isMastered",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewCount",
+            "columnName": "reviewCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastReviewedAt",
+            "columnName": "lastReviewedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ebbinghausStage",
+            "columnName": "ebbinghausStage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextReviewAt",
+            "columnName": "nextReviewAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "bookId",
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "word_formulas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `spell` TEXT NOT NULL, `prefixId` TEXT, `rootId` TEXT, `suffixId` TEXT, `prefixPart` TEXT, `rootPart` TEXT, `suffixPart` TEXT, `literalFormula` TEXT NOT NULL, `chineseMeaning` TEXT NOT NULL, `sentenceEn` TEXT NOT NULL, `sentenceZh` TEXT NOT NULL, `isAssembled` INTEGER NOT NULL, `lastReviewedAt` INTEGER NOT NULL, `ebbinghausStage` INTEGER NOT NULL, `nextReviewAt` INTEGER NOT NULL, `frequencyGroup` TEXT NOT NULL, `bookId` TEXT NOT NULL, PRIMARY KEY(`bookId`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spell",
+            "columnName": "spell",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prefixId",
+            "columnName": "prefixId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rootId",
+            "columnName": "rootId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "suffixId",
+            "columnName": "suffixId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "prefixPart",
+            "columnName": "prefixPart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rootPart",
+            "columnName": "rootPart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "suffixPart",
+            "columnName": "suffixPart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "literalFormula",
+            "columnName": "literalFormula",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chineseMeaning",
+            "columnName": "chineseMeaning",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentenceEn",
+            "columnName": "sentenceEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentenceZh",
+            "columnName": "sentenceZh",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAssembled",
+            "columnName": "isAssembled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastReviewedAt",
+            "columnName": "lastReviewedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ebbinghausStage",
+            "columnName": "ebbinghausStage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextReviewAt",
+            "columnName": "nextReviewAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frequencyGroup",
+            "columnName": "frequencyGroup",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "bookId",
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "wordbooks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `lastWordId` TEXT, `dailyNewTarget` INTEGER NOT NULL DEFAULT 20, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastWordId",
+            "columnName": "lastWordId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dailyNewTarget",
+            "columnName": "dailyNewTarget",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "20"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "library_state",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `activeBookId` TEXT NOT NULL, `historyStartedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activeBookId",
+            "columnName": "activeBookId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "historyStartedAt",
+            "columnName": "historyStartedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "review_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `sessionId` TEXT NOT NULL, `bookId` TEXT NOT NULL, `targetId` TEXT NOT NULL, `targetLabel` TEXT NOT NULL, `targetKind` TEXT NOT NULL, `mode` TEXT NOT NULL, `prompt` TEXT NOT NULL, `answer` TEXT NOT NULL, `correct` INTEGER NOT NULL, `hints` TEXT NOT NULL, `attempt` INTEGER NOT NULL, `answeredAt` INTEGER NOT NULL, `elapsedMs` INTEGER NOT NULL, `stageBefore` INTEGER NOT NULL, `stageAfter` INTEGER NOT NULL, `scheduleChanged` INTEGER NOT NULL, `retryOf` TEXT, `schedulerVersion` TEXT NOT NULL, `sequence` INTEGER NOT NULL, `firstLearning` INTEGER DEFAULT NULL, `dueReview` INTEGER DEFAULT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetId",
+            "columnName": "targetId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetLabel",
+            "columnName": "targetLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetKind",
+            "columnName": "targetKind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mode",
+            "columnName": "mode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prompt",
+            "columnName": "prompt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answer",
+            "columnName": "answer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correct",
+            "columnName": "correct",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hints",
+            "columnName": "hints",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attempt",
+            "columnName": "attempt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answeredAt",
+            "columnName": "answeredAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elapsedMs",
+            "columnName": "elapsedMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stageBefore",
+            "columnName": "stageBefore",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stageAfter",
+            "columnName": "stageAfter",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduleChanged",
+            "columnName": "scheduleChanged",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "retryOf",
+            "columnName": "retryOf",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "schedulerVersion",
+            "columnName": "schedulerVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sequence",
+            "columnName": "sequence",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstLearning",
+            "columnName": "firstLearning",
+            "affinity": "INTEGER",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "dueReview",
+            "columnName": "dueReview",
+            "affinity": "INTEGER",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_review_events_bookId_sequence",
+            "unique": false,
+            "columnNames": [
+              "bookId",
+              "sequence"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_review_events_bookId_sequence` ON `${TABLE_NAME}` (`bookId`, `sequence`)"
+          },
+          {
+            "name": "index_review_events_sequence",
+            "unique": true,
+            "columnNames": [
+              "sequence"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_review_events_sequence` ON `${TABLE_NAME}` (`sequence`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '510376961c064478de8e1ac9f699c429')"
+    ]
+  }
+}

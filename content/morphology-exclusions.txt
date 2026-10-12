@@ -1,0 +1,50 @@
+# Target-level exclusions for shared morphology only; spelling assistance is still allowed.
+# These have ambiguous common senses, archaic analyses, or misleading homograph bases.
+# A denylist is not a claim that every other entry has been manually reviewed.
+army
+butter
+cater
+copper
+county
+factory
+faith
+grateful
+honey
+important
+laser
+letter
+liver
+master
+music
+offer
+peer
+repetition
+resource
+shower
+succession
+tender
+tower
+witness
+# Historical/opaque prefix paths do not serve as modern productive explanations.
+behave
+belong
+consequence
+consequent
+depend
+engage
+forget
+forgive
+investigate
+persuasion
+proportion
+recommend
+remove
+resemble
+resolve
+# Explicit known false splits; also present in the rules or original pack filter.
+remember
+carpet
+scarlet
+corner
+butterfly
+counterfeit

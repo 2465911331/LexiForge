@@ -1,0 +1,205 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "085574134c45d002745d1a9e734ab673",
+    "entities": [
+      {
+        "tableName": "affix_components",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `icon` TEXT NOT NULL, `literalMeaning` TEXT NOT NULL, `anchorWord` TEXT NOT NULL, `anchorDesc` TEXT NOT NULL, `isMastered` INTEGER NOT NULL, `reviewCount` INTEGER NOT NULL, `lastReviewedAt` INTEGER NOT NULL, `ebbinghausStage` INTEGER NOT NULL, `nextReviewAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "literalMeaning",
+            "columnName": "literalMeaning",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anchorWord",
+            "columnName": "anchorWord",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anchorDesc",
+            "columnName": "anchorDesc",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isMastered",
+            "columnName": "isMastered",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewCount",
+            "columnName": "reviewCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastReviewedAt",
+            "columnName": "lastReviewedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ebbinghausStage",
+            "columnName": "ebbinghausStage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextReviewAt",
+            "columnName": "nextReviewAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "word_formulas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `spell` TEXT NOT NULL, `prefixId` TEXT, `rootId` TEXT, `suffixId` TEXT, `prefixPart` TEXT, `rootPart` TEXT, `suffixPart` TEXT, `literalFormula` TEXT NOT NULL, `chineseMeaning` TEXT NOT NULL, `sentenceEn` TEXT NOT NULL, `sentenceZh` TEXT NOT NULL, `isAssembled` INTEGER NOT NULL, `lastReviewedAt` INTEGER NOT NULL, `ebbinghausStage` INTEGER NOT NULL, `nextReviewAt` INTEGER NOT NULL, `frequencyGroup` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spell",
+            "columnName": "spell",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prefixId",
+            "columnName": "prefixId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rootId",
+            "columnName": "rootId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "suffixId",
+            "columnName": "suffixId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "prefixPart",
+            "columnName": "prefixPart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rootPart",
+            "columnName": "rootPart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "suffixPart",
+            "columnName": "suffixPart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "literalFormula",
+            "columnName": "literalFormula",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chineseMeaning",
+            "columnName": "chineseMeaning",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentenceEn",
+            "columnName": "sentenceEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentenceZh",
+            "columnName": "sentenceZh",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAssembled",
+            "columnName": "isAssembled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastReviewedAt",
+            "columnName": "lastReviewedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ebbinghausStage",
+            "columnName": "ebbinghausStage",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextReviewAt",
+            "columnName": "nextReviewAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frequencyGroup",
+            "columnName": "frequencyGroup",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '085574134c45d002745d1a9e734ab673')"
+    ]
+  }
+}

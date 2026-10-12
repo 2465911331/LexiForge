@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="1254" android:viewportHeight="1254">
+    <!-- Book/L silhouette for launcher-controlled themed colors. -->
+    <group android:scaleX="0.7777778" android:scaleY="0.7777778"
+        android:translateX="139.3333" android:translateY="139.3333">
+        <path android:fillColor="#FFFFFFFF"
+            android:pathData="M333,294 C333,260 356,244 386,263 L538,345 C570,364 585,391 585,424 L585,742 C687,691 767,669 841,690 C933,706 950,795 977,849 L1021,950 Q1026,961 1012,958 C863,926 744,969 659,1007 C619,941 528,939 398,901 C350,888 333,873 333,826 Z" />
+        <path android:fillColor="#FFFFFFFF"
+            android:pathData="M705,420 L900,315 Q932,299 932,334 L932,530 Q933,561 903,580 L692,665 Q671,675 671,650 L671,481 Q671,443 705,420 Z" />
+    </group>
+</vector>

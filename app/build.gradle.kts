@@ -1,9 +1,36 @@
+import java.security.MessageDigest
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.compose)
   alias(libs.plugins.google.devtools.ksp)
   alias(libs.plugins.roborazzi)
   alias(libs.plugins.secrets)
+}
+
+val embeddedModel = providers.gradleProperty("embeddedModel").orNull == "true"
+
+if (embeddedModel) {
+  val verifyEmbeddedModel by tasks.registering {
+    doLast {
+      val model = file("embedded-assets/models/MiniCPM5-1B-Q4_K_M.gguf")
+      check(model.length() == 688065920L) { "Missing embedded model. Run scripts/build-offline-test.ps1 first." }
+      val digest = MessageDigest.getInstance("SHA-256")
+      model.inputStream().use { input ->
+        val bytes = ByteArray(1024 * 1024)
+        while (true) {
+          val count = input.read(bytes)
+          if (count < 0) break
+          digest.update(bytes, 0, count)
+        }
+      }
+      check(digest.digest().joinToString("") { "%02x".format(it) } == "81b64d05a23b17b34c475f42b3e72fbde62d4b92cc34541f7a8031d0752deafa") { "Bundled model SHA-256 mismatch" }
+      listOf("liblexiforge_llama.so").forEach {
+        check(file("embedded-jni/arm64-v8a/$it").isFile) { "Missing native inference library: $it" }
+      }
+    }
+  }
+  tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(verifyEmbeddedModel) }
 }
 
 android {
@@ -14,8 +41,10 @@ android {
     applicationId = "com.aistudio.lexiforge.vzwkr"
     minSdk = 24
     targetSdk = 36
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = 13
+    versionName = "1.0.12-test"
+    buildConfigField("boolean", "EMBEDDED_MODEL", embeddedModel.toString())
+    if (embeddedModel) ndk { abiFilters += "arm64-v8a" }
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -56,7 +85,14 @@ android {
     buildConfig = true
   }
   testOptions { unitTests { isIncludeAndroidResources = true } }
+  if (embeddedModel) {
+    sourceSets.getByName("main").assets.srcDir("embedded-assets")
+    sourceSets.getByName("main").jniLibs.srcDir("embedded-jni")
+    androidResources { noCompress += "gguf" }
+  }
 }
+
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 
 // Configure the Secrets Gradle Plugin to use .env and .env.example files
 // to match the convention used in Web projects.
