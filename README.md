@@ -6,8 +6,10 @@
 
 | 版本 | 安装包 | 大小 | 区别 |
 |---|---|---|---|
-| 内置 AI 测试版 · 1.0.12-test | `LexiForge-1.0.12-内置AI.apk` | 约 716 MB | 包含 MiniCPM5-1B Q4_K_M，可在单词详情页本机生成学习草稿，无 AI API 调用 |
-| 不内置 AI 版 · 1.0.11 | `LexiForge-1.0.11-不内置AI.apk` | 约 23 MB | 不包含模型，提供词书、每日计划、复习、内容纠错、词族与考试词汇专项 |
+| 内置 AI 测试版 · 1.0.12-test | [LexiForge-1.0.12-withAI.apk](https://github.com/2465911331/LexiForge/releases/download/v1.0.12-test/LexiForge-1.0.12-withAI.apk) | 约 716 MB | 包含 MiniCPM5-1B Q4_K_M，可在单词详情页本机生成学习草稿，无 AI API 调用 |
+| 不内置 AI 版 · 1.0.11 | [LexiForge-1.0.11-noAI.apk](https://github.com/2465911331/LexiForge/releases/download/v1.0.12-test/LexiForge-1.0.11-noAI.apk) | 约 23 MB | 不包含模型，提供词书、每日计划、复习、内容纠错、词族与考试词汇专项 |
+
+GitHub 会改写中文附件名，发布文件统一用 `withAI`（内置 AI）与 `noAI`（不内置 AI）区分，下载页面附有中文标注。本地交付文件仍保留中文名称；Release 校验文件使用实际发布的文件名。
 
 两个包沿用同一应用包名和开发签名，可以由普通版升级到内置 AI 版，不能同时安装。安装前请导出学习备份；安装内置 AI 版后不要通过卸载重装来降级，以免删除学习数据。这次不内置 AI 安装包保留真实版本号 1.0.11；后续计划从同一版本源码同时发布两种构建。
 
